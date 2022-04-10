@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import {getType} from 'mime';
 import {File, NFTStorage} from 'nft.storage';
 import path from 'path';

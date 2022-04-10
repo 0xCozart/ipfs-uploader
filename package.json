@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/dotenv-safe": "^8.1.2",
+    "@types/fs-extra": "^9.0.13",
     "@types/mime": "^2.0.3",
     "@types/node": "^14.18.12",
     "gts": "^3.1.0",
@@ -34,7 +35,8 @@
   },
   "dependencies": {
     "dotenv-safe": "^8.2.0",
+    "fs-extra": "^10.0.1",
     "mime": "^3.0.0",
-    "nft.storage": "^6.1.0"
+    "nft.storage": "^6.2.0"
   }
 }
