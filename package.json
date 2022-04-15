@@ -37,6 +37,9 @@
     "dotenv-safe": "^8.2.0",
     "fs-extra": "^10.0.1",
     "mime": "^3.0.0",
-    "nft.storage": "^6.2.0"
+    "nft.storage": "^6.2.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.19.0"
   }
 }

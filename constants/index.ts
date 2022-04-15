@@ -6,4 +6,6 @@ dotenvSafe.config({
   example: path.resolve(__dirname, '..', '.env.example'),
 });
 
-export const {NFTSTORAGEKEY} = <{[key: string]: string}>process.env;
+export const {NFTSTORAGEKEY, POSTGRES_URL} = <{[key: string]: string}>(
+  process.env
+);
