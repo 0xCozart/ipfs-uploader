@@ -3,36 +3,41 @@ import {getType} from 'mime';
 import {File, NFTStorage} from 'nft.storage';
 import * as path from 'path';
 import {DataTypes, Sequelize} from 'sequelize';
+import {TABLENAME} from '../constants';
 import CID from '../db/';
 
 class Uploader {
-  private folderPath: string;
+  private assetsPath: string;
   // eslint-disable-next-line
   private jsonSchema: ReturnType<() => any>;
   private storage: NFTStorage;
   private db: Sequelize;
   private model: typeof CID | null;
 
-  constructor(_folderpath: string, token: string, db_url: string) {
-    this.folderPath = path.resolve(_folderpath);
-    this.jsonSchema = fs.readJsonSync(_folderpath + '/schema.json');
+  constructor(assetsPath: string, token: string, db_url: string) {
+    this.assetsPath = assetsPath;
+    this.jsonSchema = fs.readJsonSync(assetsPath + '/schema.json');
     this.storage = new NFTStorage({token});
     this.db = new Sequelize(db_url);
     if (this.db !== undefined) {
       this.model = CID.init(
         {
-          id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+          ID: {
+            type: DataTypes.INTEGER.UNSIGNED || DataTypes.STRING,
             autoIncrement: false,
             primaryKey: true,
           },
-          cid: {
+          ImageCID: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+          },
+          MetadataCID: {
+            type: DataTypes.STRING,
+            allowNull: true,
           },
         },
         {
-          tableName: 'cids',
+          tableName: TABLENAME,
           sequelize: this.db,
         }
       );
@@ -53,16 +58,36 @@ class Uploader {
     return new File([content], path.basename(filePath), {type});
   }
 
-  private async getFileList() {
-    const files = await fs.readdir(this.folderPath);
-    return files.filter(file => {
-      if (file.endsWith('.jpg')) {
-        return path.resolve(__dirname, '../assets/', file);
-      }
-    });
+  private async getImageFileList() {
+    const folder = await fs.readdir(this.assetsPath);
+    const fileList: string[] = [];
+    if (folder) {
+      folder.filter(file => {
+        if (file.endsWith('.jpg')) {
+          fileList.push(path.resolve(this.assetsPath, file));
+        }
+      });
+    }
+    return fileList;
   }
 
-  async upload() {}
+  async uploadFiles() {
+    const fileList = await this.getImageFileList();
+    if (fileList.length === 0) {
+      console.log('No image files found');
+      return;
+    }
+    for (const file of fileList) {
+      const name = path.basename(file, '.jpg');
+      const description = this.jsonSchema.description;
+      const cid = await this.storeNFT(file, name, description);
+      if (this.model !== null) {
+        console.log({name, cid});
+        await this.model.create({cid});
+      }
+    }
+    console.log('Upload complete!');
+  }
 }
 
 export default Uploader;

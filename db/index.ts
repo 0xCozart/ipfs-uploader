@@ -1,8 +1,9 @@
 import {Model} from 'sequelize';
 
 class CID extends Model {
-  public id!: number;
-  public cid!: string;
+  declare ID: number | string;
+  declare ImageCID: string;
+  declare MetadataCID: string;
 }
 
 export default CID;
