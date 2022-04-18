@@ -29,12 +29,12 @@ describe('Postgresql feature', () => {
     );
   });
 
-  it('should store id and cid', () => {
+  it('should store id and cid', async () => {
     const id = 3231;
     const cid =
       'ipfs://bafyreidspexfuk7u23lzu2uqj6ikqubckus3zohunjcdiwr3l2qly6u7iy/metadata.json';
-    const query = model?.findOne({where: {ID: id}});
+    const query = await model?.findOne({where: {ID: id}});
     console.log({query});
-    expect(query).to.equal(cid);
+    expect(query?.CID).to.equal(cid);
   });
 });

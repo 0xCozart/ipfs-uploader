@@ -7,6 +7,10 @@
   },
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts",
-    "index.d.ts"  ]
+    "index.d.ts"  ],
+  "exclude": [
+    "./tests/",
+    "./node_modules/",
+    "./dist/"
+  ],
 }

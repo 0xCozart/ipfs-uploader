@@ -16,14 +16,12 @@
     "uploader"
   ],
   "scripts": {
-    "test": "mocha",
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
     "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint",
     "start": "ts-node ./src/index.ts"
   },
   "devDependencies": {
