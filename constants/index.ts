@@ -8,6 +8,6 @@ dotenvSafe.config({
 
 export const ASSETS_PATH = path.resolve(__dirname, '../', 'assets');
 
-export const {NFTSTORAGE_TOKEN, POSTGRES_URL, TABLENAME} = <
+export const {NFTSTORAGE_TOKEN, POSTGRES_URL, TABLENAME, NAME_PREFIX} = <
   {[key: string]: string}
 >process.env;
