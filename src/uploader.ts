@@ -16,7 +16,9 @@ class Uploader {
 
   constructor(assetsPath: string, token: string, db_url: string) {
     this.assetsPath = assetsPath;
-    this.jsonSchema = fs.readJsonSync(assetsPath + '/schema.json');
+    this.jsonSchema = fs.readJsonSync(
+      path.resolve(__dirname, '..', 'metadataSchema.json')
+    );
     this.storage = new NFTStorage({token});
     this.db = new Sequelize(db_url);
     if (this.db !== undefined) {
@@ -27,11 +29,7 @@ class Uploader {
             autoIncrement: false,
             primaryKey: true,
           },
-          ImageCID: {
-            type: DataTypes.STRING,
-            allowNull: true,
-          },
-          MetadataCID: {
+          CID: {
             type: DataTypes.STRING,
             allowNull: true,
           },
@@ -41,6 +39,7 @@ class Uploader {
           sequelize: this.db,
         }
       );
+      this.model.sync();
     } else {
       this.model = null;
     }
@@ -83,7 +82,7 @@ class Uploader {
       const cid = await this.storeNFT(file, name, description);
       if (this.model !== null) {
         console.log({name, cid});
-        await this.model.create({cid});
+        await this.model.create({ID: parseInt(name), CID: cid.url});
       }
     }
     console.log('Upload complete!');

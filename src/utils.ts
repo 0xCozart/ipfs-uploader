@@ -2,12 +2,12 @@ import fs from 'fs-extra';
 import {getType} from 'mime';
 import {File, NFTStorage} from 'nft.storage';
 import path from 'path';
-import {NFTSTORAGEKEY} from '../constants';
+import {NFTSTORAGE_TOKEN} from '../constants';
 
 async function storeNFT(imagePath: string, name: string, description: string) {
   const image = await fileFromPath(imagePath);
 
-  const nftstorage = new NFTStorage({token: NFTSTORAGEKEY});
+  const nftstorage = new NFTStorage({token: NFTSTORAGE_TOKEN});
 
   return nftstorage.store({image, name, description});
 }
