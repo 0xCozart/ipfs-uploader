@@ -5,6 +5,8 @@ import * as path from 'path';
 import {DataTypes, Sequelize} from 'sequelize';
 import {NAME_PREFIX, TABLENAME} from '../constants';
 import CID from '../db/';
+import {MetaDataSchema} from '../types';
+import {setMetaDataSchema} from './utils';
 
 class Uploader {
   private assetsPath: string;
@@ -56,15 +58,10 @@ class Uploader {
    * @returns {Promise<{CID}>}
    * @throws {Error}
    */
-  private async storeNFT(
-    imagePath: string,
-    name: string,
-    description: string,
-    properties: typeof this.jsonSchema.properties
-  ) {
-    const image = await this.fileFromPath(imagePath);
+  private async storeNFT(metadata: MetaDataSchema) {
+    const image = await this.fileFromPath(metadata.imagePath);
 
-    return this.storage.store({image, name, description, properties});
+    return this.storage.store({...metadata, image});
   }
 
   private async fileFromPath(filePath: string) {
@@ -86,17 +83,27 @@ class Uploader {
     return fileList;
   }
 
+  /**
+   * Uploads all files in the assets directory to IPFS and stores CID in Postgres.
+   * TODO: properties manager.
+   * ?: not sure if should refactor for performance.
+   */
   async uploadFiles() {
     const fileList = await this.getImageFileList();
     if (fileList.length === 0) {
       console.log('No image files found');
       return;
     }
-    for (const file of fileList) {
-      const id = path.basename(file, '.jpg');
+    for (const filePath of fileList) {
+      const id = path.basename(filePath, '.jpg');
       const name = `${NAME_PREFIX} ${id}`;
-      const description = this.jsonSchema.description;
-      const cid = await this.storeNFT(file, name, description, {});
+      const metadata = setMetaDataSchema(
+        name,
+        this.jsonSchema.description,
+        filePath,
+        this.jsonSchema.properties
+      );
+      const cid = await this.storeNFT(metadata);
       if (this.model !== null) {
         console.log({name, cid});
         await this.model.create({ID: parseInt(name), CID: cid.url});
