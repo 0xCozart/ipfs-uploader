@@ -59,7 +59,7 @@ class Uploader {
    * @throws {Error}
    */
   private async storeNFT(metadata: MetaDataSchema) {
-    const image = await this.fileFromPath(metadata.imagePath);
+    const image = await this.fileFromPath(metadata.image);
 
     return this.storage.store({...metadata, image});
   }
@@ -94,13 +94,13 @@ class Uploader {
       console.log('No image files found');
       return;
     }
-    for (const filePath of fileList) {
-      const id = path.basename(filePath, '.jpg');
+    for (const image of fileList) {
+      const id = path.basename(image, '.jpg');
       const name = `${NAME_PREFIX} ${id}`;
       const metadata = setMetaDataSchema(
         name,
         this.jsonSchema.description,
-        filePath,
+        image,
         this.jsonSchema.properties
       );
       const cid = await this.storeNFT(metadata);
